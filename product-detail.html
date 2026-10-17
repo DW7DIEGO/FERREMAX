@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Producto - FerreMax</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/product-detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header id="header">
+        <!-- Header will be loaded via JavaScript -->
+    </header>
+
+    <main>
+        <div class="product-container">
+            <div class="breadcrumb">
+                <a href="index.html">Inicio</a> > 
+                <a href="products.html">Productos</a> >
+                <a href="products.html?category=herramientas">Herramientas</a> >
+                <span id="product-breadcrumb-name">Detalle de Producto</span>
+            </div>
+            
+            <div class="product-content">
+                <div class="product-gallery">
+                    <div class="main-image">
+                        <img id="product-main-image" src="https://via.placeholder.com/500x500?text=Producto" alt="Producto">
+                    </div>
+                    <div class="product-thumbnails">
+                        <div class="thumbnail active" data-src="https://via.placeholder.com/500x500?text=Producto">
+                        <img src="img/taladro.jpg" alt ="taladro">
+                        </div>
+                        <div class="thumbnail" data-src="https://via.placeholder.com/500x500?text=Producto+2">
+                            <img src="img/taladro.jpg" alt ="taladro">
+                        </div>
+                        <div class="thumbnail" data-src="https://via.placeholder.com/500x500?text=Producto+3">
+                            <img src="img/taladro.jpg" alt ="taladro">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-details">
+                    <div class="product-info">
+                        <h1 id="product-name">Taladro Percutor Inalámbrico 20V Bosch</h1>
+                        <div class="product-meta">
+                            <div class="product-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span>(24 reseñas)</span>
+                            </div>
+                            <div class="product-code">Código: <span id="product-code">BSCH-20V-TLD</span></div>
+                        </div>
+                        
+                        <div class="product-price-container">
+                            <div class="price-info">
+                                <span class="old-price" id="product-old-price">$249.99</span>
+                                <span class="current-price" id="product-price">$199.99</span>
+                                <span class="discount-badge">-20%</span>
+                            </div>
+                            <div class="product-availability">
+                                <i class="fas fa-check-circle"></i> En Stock
+                            </div>
+                        </div>
+                        
+                        <div class="product-short-description">
+                            <p id="product-short-desc">Taladro percutor inalámbrico con batería de litio de 20V, 2 velocidades, 13mm de capacidad de portabroca, incluye maletín, cargador y 2 baterías.</p>
+                        </div>
+                        
+                        <div class="product-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn" id="decrease-quantity">-</button>
+                                <input type="number" id="product-quantity" value="1" min="1">
+                                <button class="quantity-btn" id="increase-quantity">+</button>
+                            </div>
+                            <button class="btn btn-primary" id="add-to-cart">
+                                <i class="fas fa-cart-plus"></i> Añadir al Carrito
+                            </button>
+                            <button class="btn btn-icon" id="add-to-wishlist">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="product-additional-info">
+                            <div class="info-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Envío gratis en pedidos superiores a $50</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Garantía de 2 años</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>30 días para devoluciones</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-tabs">
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="description">Descripción</button>
+                    <button class="tab-btn" data-tab="specifications">Especificaciones</button>
+                    <button class="tab-btn" data-tab="reviews">Reseñas (24)</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div id="description" class="tab-pane active">
+                        <h3>Descripción del Producto</h3>
+                        <p id="product-description">
+                            El taladro percutor inalámbrico Bosch de 20V es una herramienta profesional diseñada para ofrecer un rendimiento excepcional en todo tipo de trabajos de perforación y atornillado. Con su potente motor sin escobillas, proporciona más potencia y mayor duración de la batería.
+                        </p>
+                        <p>
+                            Características principales:
+                        </p>
+                        <ul>
+                            <li>Motor sin escobillas para mayor eficiencia y durabilidad</li>
+                            <li>2 velocidades variables para mayor control</li>
+                            <li>20 posiciones de par + taladro + percutor</li>
+                            <li>Luz LED para trabajar en áreas con poca iluminación</li>
+                            <li>Batería de litio de 20V con indicador de carga</li>
+                            <li>Mango ergonómico con revestimiento antideslizante</li>
+                        </ul>
+                    </div>
+                    
+                    <div id="specifications" class="tab-pane">
+                        <h3>Especificaciones Técnicas</h3>
+                        <table class="specs-table">
+                            <tr>
+                                <th>Marca</th>
+                                <td>Bosch</td>
+                            </tr>
+                            <tr>
+                                <th>Modelo</th>
+                                <td>GSB 20-2 LI</td>
+                            </tr>
+                            <tr>
+                                <th>Tipo</th>
+                                <td>Taladro Percutor Inalámbrico</td>
+                            </tr>
+                            <tr>
+                                <th>Voltaje</th>
+                                <td>20V</td>
+                            </tr>
+                            <tr>
+                                <th>Capacidad del portabrocas</th>
+                                <td>13mm</td>
+                            </tr>
+                            <tr>
+                                <th>Velocidad sin carga</th>
+                                <td>0-450/0-1700 RPM</td>
+                            </tr>
+                            <tr>
+                                <th>Máx. par de apriete</th>
+                                <td>60 Nm</td>
+                            </tr>
+                            <tr>
+                                <th>Máx. capacidad de perforación (madera)</th>
+                                <td>40mm</td>
+                            </tr>
+                            <tr>
+                                <th>Máx. capacidad de perforación (metal)</th>
+                                <td>13mm</td>
+                            </tr>
+                            <tr>
+                                <th>Máx. capacidad de perforación (mampostería)</th>
+                                <td>13mm</td>
+                            </tr>
+                            <tr>
+                                <th>Peso</th>
+                                <td>1.5 kg</td>
+                            </tr>
+                            <tr>
+                                <th>Incluye</th>
+                                <td>2 baterías, cargador, maletín, set de puntas</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div id="reviews" class="tab-pane">
+                        <h3>Opiniones de Clientes</h3>
+                        <div class="reviews-summary">
+                            <div class="rating-average">
+                                <span class="average-number">4.5</span>
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="reviews-count">Basado en 24 reseñas</span>
+                            </div>
+                            <div class="rating-bars">
+                                <div class="rating-bar">
+                                    <span class="stars-label">5 estrellas</span>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 75%"></div>
+                                    </div>
+                                    <span class="count">18</span>
+                                </div>
+                                <div class="rating-bar">
+                                    <span class="stars-label">4 estrellas</span>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 16%"></div>
+                                    </div>
+                                    <span class="count">4</span>
+                                </div>
+                                <div class="rating-bar">
+                                    <span class="stars-label">3 estrellas</span>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 8%"></div>
+                                    </div>
+                                    <span class="count">2</span>
+                                </div>
+                                <div class="rating-bar">
+                                    <span class="stars-label">2 estrellas</span>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 0%"></div>
+                                    </div>
+                                    <span class="count">0</span>
+                                </div>
+                                <div class="rating-bar">
+                                    <span class="stars-label">1 estrella</span>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: 0%"></div>
+                                    </div>
+                                    <span class="count">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="reviews-list">
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="review-author">
+                                        <span class="author-name">Juan Pérez</span>
+                                        <span class="verification-badge">Compra verificada</span>
+                                    </div>
+                                    <div class="review-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="review-date">12/05/2023</span>
+                                    </div>
+                                </div>
+                                <h4 class="review-title">Excelente calidad y duración de batería</h4>
+                                <p class="review-text">
+                                    He estado usando este taladro durante 3 meses para trabajos profesionales y estoy muy impresionado con su rendimiento. La batería dura todo el día de trabajo y tiene suficiente potencia para todas las tareas que necesito.
+                                </p>
+                            </div>
+                            
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="review-author">
+                                        <span class="author-name">María Rodríguez</span>
+                                        <span class="verification-badge">Compra verificada</span>
+                                    </div>
+                                    <div class="review-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                        </div>
+                                        <span class="review-date">28/04/2023</span>
+                                    </div>
+                                </div>
+                                <h4 class="review-title">Muy bueno pero un poco pesado</h4>
+                                <p class="review-text">
+                                    El taladro funciona perfectamente y tiene mucha potencia. Mi única queja es que después de usarlo por un tiempo prolongado se siente un poco pesado. Por lo demás, es un producto de excelente calidad.
+                                </p>
+                            </div>
+                            
+                            <button class="btn btn-secondary btn-block">Ver todas las reseñas</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <section class="related-products">
+                <h2>Productos Relacionados</h2>
+                <div class="products-grid" id="related-products">
+                    <!-- Related products will be loaded via JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <!-- Footer will be loaded via JavaScript -->
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/product-detail.js"></script>
+</body>
+</html>

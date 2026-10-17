@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - FerreMax</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/products.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header id="header">
+        <!-- Header will be loaded via JavaScript -->
+    </header>
+
+    <main>
+        <div class="products-container">
+            <aside class="filters-sidebar">
+                <div class="filter-group">
+                    <h3>Categorías</h3>
+                    <ul class="category-list">
+                        <li><a href="#" class="category-item active" data-category="all">Todos los productos</a></li>
+                        <li><a href="#" class="category-item" data-category="herramientas">Herramientas</a></li>
+                        <li><a href="#" class="category-item" data-category="electricidad">Electricidad</a></li>
+                        <li><a href="#" class="category-item" data-category="plomeria">Plomería</a></li>
+                        <li><a href="#" class="category-item" data-category="jardin">Jardín</a></li>
+                        <li><a href="#" class="category-item" data-category="construccion">Construcción</a></li>
+                        <li><a href="#" class="category-item" data-category="pintura">Pintura</a></li>
+                        <li><a href="#" class="category-item" data-category="iluminacion">Iluminación</a></li>
+                    </ul>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Precio</h3>
+                    <div class="price-range">
+                        <input type="range" id="price-range" min="0" max="1000" step="10" value="1000">
+                        <div class="price-labels">
+                            <span>$0</span>
+                            <span id="price-value">$1000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Marcas</h3>
+                    <div class="checkbox-list">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-1" value="bosch">
+                            <label for="brand-1">Bosch</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-2" value="dewalt">
+                            <label for="brand-2">DeWalt</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-3" value="makita">
+                            <label for="brand-3">Makita</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-4" value="stanley">
+                            <label for="brand-4">Stanley</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brand-5" value="truper">
+                            <label for="brand-5">Truper</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="apply-filters" class="btn btn-primary btn-block">Aplicar Filtros</button>
+                <button id="clear-filters" class="btn btn-secondary btn-block">Limpiar Filtros</button>
+            </aside>
+            
+            <div class="products-content">
+                <div class="products-header">
+                    <h1 id="products-title">Todos los Productos</h1>
+                    <div class="products-controls">
+                        <div class="sort-control">
+                            <label for="sort-by">Ordenar por:</label>
+                            <select id="sort-by">
+                                <option value="relevance">Relevancia</option>
+                                <option value="price-low">Precio: Menor a Mayor</option>
+                                <option value="price-high">Precio: Mayor a Menor</option>
+                                <option value="name-asc">Nombre: A-Z</option>
+                                <option value="name-desc">Nombre: Z-A</option>
+                            </select>
+                        </div>
+                        <div class="view-control">
+                            <button id="grid-view" class="view-btn active"><i class="fas fa-th"></i></button>
+                            <button id="list-view" class="view-btn"><i class="fas fa-list"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="products-grid" class="products-grid">
+                    <!-- Products will be loaded via JavaScript -->
+                </div>
+                
+                <div class="pagination">
+                    <button class="pagination-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                    <div class="pagination-numbers">
+                        <button class="pagination-number active">1</button>
+                        <button class="pagination-number">2</button>
+                        <button class="pagination-number">3</button>
+                        <span>...</span>
+                        <button class="pagination-number">10</button>
+                    </div>
+                    <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <!-- Footer will be loaded via JavaScript -->
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>
