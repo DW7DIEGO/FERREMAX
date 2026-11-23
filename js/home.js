@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Animate benefit cards
     const benefitCards = document.querySelectorAll('.benefit-card');
     
-    if (benefitCards.length) {
+    if (benefitCards.length && 'IntersectionObserver' in window) {
         // Use Intersection Observer to trigger animations when in view
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {

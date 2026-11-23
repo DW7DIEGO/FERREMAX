@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - FerreMax</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -27,13 +27,13 @@
                             <h3 class="item-name">Taladro Percutor Inalámbrico 20V Bosch</h3>
                             <p class="item-code">Código: BSCH-20V-TLD</p>
                         </div>
-                        <div class="item-price">$199.99</div>
+                        <div class="item-price">$ 800.000</div>
                         <div class="item-quantity">
                             <button class="quantity-btn decrease">-</button>
                             <input type="number" value="1" min="1">
                             <button class="quantity-btn increase">+</button>
                         </div>
-                        <div class="item-total">$199.99</div>
+                        <div class="item-total">$ 800.000</div>
                         <div class="item-actions">
                             <button class="btn-icon"><i class="far fa-heart"></i></button>
                             <button class="btn-icon remove-item"><i class="far fa-trash-alt"></i></button>
@@ -48,13 +48,13 @@
                             <h3 class="item-name">Juego de Llaves Combinadas Stanley - 12 pzs</h3>
                             <p class="item-code">Código: STNL-12-CW</p>
                         </div>
-                        <div class="item-price">$45.99</div>
+                        <div class="item-price">$ 184.000</div>
                         <div class="item-quantity">
                             <button class="quantity-btn decrease">-</button>
                             <input type="number" value="2" min="1">
                             <button class="quantity-btn increase">+</button>
                         </div>
-                        <div class="item-total">$91.98</div>
+                        <div class="item-total">$ 368.000</div>
                         <div class="item-actions">
                             <button class="btn-icon"><i class="far fa-heart"></i></button>
                             <button class="btn-icon remove-item"><i class="far fa-trash-alt"></i></button>
@@ -62,10 +62,7 @@
                     </div>
                     
                     <div class="cart-actions">
-                        <div class="coupon">
-                            <input type="text" placeholder="Código de cupón" class="coupon-input">
-                            <button class="btn btn-secondary">Aplicar Cupón</button>
-                        </div>
+                        <p>Las ofertas ya estan incluidas en el precio.</p>
                         <button class="btn btn-secondary update-cart">Actualizar Carrito</button>
                     </div>
                 </div>
@@ -75,7 +72,7 @@
                     
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span class="summary-value">$291.97</span>
+                        <span class="summary-value">$ 1.168.000</span>
                     </div>
                     
                     <div class="summary-row">
@@ -83,44 +80,37 @@
                         <div class="shipping-options">
                             <div class="radio-option">
                                 <input type="radio" id="shipping-standard" name="shipping" checked>
-                                <label for="shipping-standard">Estándar - $5.99</label>
+                                <label for="shipping-standard">Estándar - $ 20.000</label>
                             </div>
                             <div class="radio-option">
                                 <input type="radio" id="shipping-express" name="shipping">
-                                <label for="shipping-express">Express - $12.99</label>
+                                <label for="shipping-express">Express - $ 40.000</label>
                             </div>
                             <div class="radio-option">
                                 <input type="radio" id="shipping-free" name="shipping">
-                                <label for="shipping-free">Gratis en pedidos > $50</label>
+                                <label for="shipping-free">Gratis en pedidos desde $ 200.000</label>
                             </div>
                         </div>
                     </div>
                     
                     <div class="summary-row discount">
                         <span>Descuento</span>
-                        <span class="summary-value">-$0.00</span>
+                        <span class="summary-value">-$ 0</span>
                     </div>
                     
                     <div class="summary-row total">
                         <span>Total</span>
-                        <span class="summary-value">$291.97</span>
+                        <span class="summary-value">$ 1.168.000</span>
                     </div>
                     
-                    <button class="btn btn-primary btn-block checkout-btn">Proceder al Pago</button>
+                    <form id="delivery-form">
+<label for="delivery-address">Dirección de entrega</label><input id="delivery-address" name="address" required minlength="5" maxlength="255" autocomplete="street-address" style="width:100%;padding:10px;margin:8px 0">
+<label for="delivery-city">Ciudad</label><input id="delivery-city" name="city" required minlength="2" maxlength="100" autocomplete="address-level2" style="width:100%;padding:10px;margin:8px 0">
+<label for="delivery-phone">Telefono de contacto</label><input id="delivery-phone" name="phone" required pattern="[0-9+ \(\)\-]{7,25}" autocomplete="tel" style="width:100%;padding:10px;margin:8px 0">
+<p>Pago manual: el pedido queda pendiente hasta que la tienda confirme el pago. No se cobra en esta pagina.</p>
+<button type="button" class="btn btn-primary btn-block checkout-btn">Registrar pedido</button></form>
                     
-                    <div class="secure-checkout">
-                        <i class="fas fa-lock"></i> Pago 100% seguro
-                    </div>
                     
-                    <div class="accepted-payments">
-                        <span>Aceptamos:</span>
-                        <div class="payment-icons">
-                            <i class="fab fa-cc-visa"></i>
-                            <i class="fab fa-cc-mastercard"></i>
-                            <i class="fab fa-cc-amex"></i>
-                            <i class="fab fa-cc-paypal"></i>
-                        </div>
-                    </div>
                 </div>
             </div>
             
@@ -140,8 +130,12 @@
         <!-- Footer will be loaded via JavaScript -->
     </footer>
 
-    <script src="js/auth.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/cart.js"></script>
+    <script src="../js/config.js"></script>
+
+    <script src="../js/api.js"></script>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/cart.js"></script>
 </body>
 </html>

@@ -25,6 +25,7 @@ function initProductGallery() {
             
             // Update main image
             const imageSrc = this.getAttribute('data-src');
+            if (!imageSrc) return;
             mainImage.src = imageSrc;
             
             // Optional: Add a fade effect
@@ -68,7 +69,7 @@ function initWishlist() {
     const productId = parseInt(params.id) || 1;
     
     // Check if product is already in wishlist
-    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const wishlist = readStoredList('wishlist');
     const isInWishlist = wishlist.includes(productId);
     
     // Update button appearance
@@ -94,7 +95,7 @@ function initWishlist() {
 // Toggle a product in the wishlist
 function toggleWishlistItem(productId) {
     // Get current wishlist
-    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const wishlist = readStoredList('wishlist');
     
     // Check if product is already in wishlist
     const index = wishlist.indexOf(productId);
@@ -108,7 +109,7 @@ function toggleWishlistItem(productId) {
     }
     
     // Save updated wishlist
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    writeStoredList('wishlist', wishlist);
     
     return wishlist;
 }

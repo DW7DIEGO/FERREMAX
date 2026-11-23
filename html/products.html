@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos - FerreMax</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/products.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/products.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -33,10 +33,10 @@
                 <div class="filter-group">
                     <h3>Precio</h3>
                     <div class="price-range">
-                        <input type="range" id="price-range" min="0" max="1000" step="10" value="1000">
+                        <input type="range" id="price-range" min="0" max="1500000" step="10000" value="1500000">
                         <div class="price-labels">
                             <span>$0</span>
-                            <span id="price-value">$1000</span>
+                            <span id="price-value">$ 1.500.000</span>
                         </div>
                     </div>
                 </div>
@@ -115,8 +115,12 @@
         <!-- Footer will be loaded via JavaScript -->
     </footer>
 
-    <script src="js/auth.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/products.js"></script>
+    <script src="../js/config.js"></script>
+
+    <script src="../js/api.js"></script>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/products.js"></script>
 </body>
 </html>

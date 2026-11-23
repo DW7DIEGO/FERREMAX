@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# FerreMax: nunca subir secretos ni la base de datos
+.env
+server/.env
+*.db
+*.sqlite
+__pycache__/
+*.pyc

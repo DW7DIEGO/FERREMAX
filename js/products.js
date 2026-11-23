@@ -1,213 +1,55 @@
 // products.js - Products related functionality
 
-// Sample products data (in a real app, this would come from a server/database)
-const products = [
-    {
-        id: 1,
-        name: 'Taladro Percutor Inalámbrico 20V Bosch',
-        code: 'BSCH-20V-TLD',
-        category: 'herramientas',
-        subcategory: 'herramientas eléctricas',
-        brand: 'Bosch',
-        price: 199.99,
-        oldPrice: 249.99,
-        rating: 4.5,
-        reviewCount: 24,
-        inStock: 3,
-        isNew: false,
-        isOnSale: true,
-        image: 'img/taladro.jpg',
-        images: [
-            'img/taladro.jpg',
-            'img/taladro.jpg',
-            'img/taladro.jpg',
-            'img/taladro.jpg'
-        ],
-        shortDescription: 'Taladro percutor inalámbrico con batería de litio de 20V, 2 velocidades, 13mm de capacidad de portabroca.',
-        description: `El taladro percutor inalámbrico Bosch de 20V es una herramienta profesional diseñada para ofrecer un rendimiento excepcional en todo tipo de trabajos de perforación y atornillado. Con su potente motor sin escobillas, proporciona más potencia y mayor duración de la batería.
+// Catalogo local de respaldo: se usa solo si la API no responde.
+// Cuando la API funciona, `products` se reemplaza con los datos de la base de datos.
+let products = [];
+let catalogAvailable = false;
 
-        Características principales:
-        - Motor sin escobillas para mayor eficiencia y durabilidad
-        - 2 velocidades variables para mayor control
-        - 20 posiciones de par + taladro + percutor
-        - Luz LED para trabajar en áreas con poca iluminación
-        - Batería de litio de 20V con indicador de carga
-        - Mango ergonómico con revestimiento antideslizante`
-    },
-    {
-        id: 2,
-        name: 'Juego de Destornilladores 42 pzs Stanley',
-        code: 'STNL-42-DST',
-        category: 'herramientas',
-        subcategory: 'herramientas manuales',
-        brand: 'Stanley',
-        price: 45.99,
-        oldPrice: null,
-        rating: 4.2,
-        reviewCount: 18,
-        inStock: 28,
-        isNew: true,
-        isOnSale: false,
-        image: 'img/alicates.jpg',
-        images: [
-            'img/alicates.jpg',
-            'img/alicates.jpg',
-            'img/alicates.jpg'
-        ],
-        shortDescription: 'Juego de 42 destornilladores de precisión con puntas intercambiables y mango ergonómico.',
-        description: 'Juego completo de destornilladores Stanley con 42 piezas para todo tipo de trabajos. Incluye puntas Phillips, planas, Torx, hexagonales y más.'
-    },
-    {
-        id: 3,
-        name: 'Sierra Circular 7-1/4" DeWalt 1800W',
-        code: 'DWLT-7-CIRC',
-        category: 'herramientas',
-        subcategory: 'herramientas eléctricas',
-        brand: 'DeWalt',
-        price: 159.99,
-        oldPrice: 179.99,
-        rating: 4.8,
-        reviewCount: 32,
-        inStock: 15,
-        isNew: false,
-        isOnSale: true,
-        image: 'img/sierra electrica.jpg',
-        images: [
-            'img/sierra electrica.jpg',
-            'img/sierra electrica.jpg'
-        ],
-        shortDescription: 'Sierra circular potente de 1800W con disco de 7-1/4" y guía láser para cortes precisos.',
-        description: 'Sierra circular DeWalt con potente motor de 1800W. Ideal para trabajos profesionales de carpintería y construcción.'
-    },
-    {
-        id: 4,
-        name: 'Escalera Multiposición Aluminio 12 Pasos',
-        code: 'TRUP-12-ESC',
-        category: 'construccion',
-        subcategory: 'escaleras',
-        brand: 'Truper',
-        price: 129.99,
-        oldPrice: null,
-        rating: 4.3,
-        reviewCount: 14,
-        inStock: 10,
-        isNew: false,
-        isOnSale: false,
-        image: 'img/escalera.jpg',
-        images: [
-            'img/escalera.jpg',
-            'img/escalera.jpg'
-        ],
-        shortDescription: 'Escalera multiposición de aluminio con 12 pasos y bloqueo de seguridad.',
-        description: 'Escalera versátil que se puede configurar en múltiples posiciones: recta, en A, o escalonada. Fabricada en aluminio ligero y resistente.'
-    },
-    {
-        id: 5,
-        name: 'Set de Brocas para Metal 15 pzs Makita',
-        code: 'MKIT-15-BRC',
-        category: 'herramientas',
-        subcategory: 'accesorios',
-        brand: 'Makita',
-        price: 24.99,
-        oldPrice: 29.99,
-        rating: 4.0,
-        reviewCount: 22,
-        inStock: 42,
-        isNew: false,
-        isOnSale: true,
-        image: 'img/Tipos-de-brocas.jpg',
-        images: [
-            'img/Tipos-de-brocas.jpg',
-            'img/Tipos-de-brocas.jpg'
-        ],
-        shortDescription: 'Set de 15 brocas para metal HSS-R de alta resistencia al desgaste.',
-        description: 'Juego profesional de brocas Makita para taladrado preciso en metal. Incluye estuche organizador y brocas de diferentes diámetros.'
-    },
-    {
-        id: 6,
-        name: 'Lámpara LED de Trabajo Recargable 20W',
-        code: 'ILUM-20-LED',
-        category: 'iluminacion',
-        subcategory: 'lámparas de trabajo',
-        brand: 'WorkLight',
-        price: 35.99,
-        oldPrice: null,
-        rating: 4.5,
-        reviewCount: 19,
-        inStock: 0,
-        isNew: true,
-        isOnSale: false,
-        image: 'img/FOCOS LED.jpg',
-        images: [
-            'img/FOCOS LED.jpg',
-            'img/FOCOS LED.jpg'
-        ],
-        shortDescription: 'Lámpara LED de trabajo con batería recargable y soporte ajustable.',
-        description: 'Lámpara LED potente con 20W de potencia. Incluye batería recargable con hasta 8 horas de autonomía y soporte ajustable para diferentes ángulos.'
-    },
-    {
-        id: 7,
-        name: 'Juego de Llaves Combinadas Stanley - 12 pzs',
-        code: 'STNL-12-CW',
-        category: 'herramientas',
-        subcategory: 'herramientas manuales',
-        brand: 'Stanley',
-        price: 45.99,
-        oldPrice: 52.99,
-        rating: 4.7,
-        reviewCount: 26,
-        inStock: 18,
-        isNew: false,
-        isOnSale: true,
-        image: 'img/juego de llaves.jpg',
-        images: [
-            'img/juego de llaves.jpg',
-            'img/juego de llaves.jpg'
-        ],
-        shortDescription: 'Juego de 12 llaves combinadas Stanley en acero cromo vanadio.',
-        description: 'Set de llaves combinadas fabricadas en acero cromo vanadio para mayor durabilidad. Acabado cromado que previene la corrosión.'
-    },
-    {
-        id: 8,
-        name: 'Motosierra a Gasolina 18" Husqvarna',
-        code: 'HSQV-18-MS',
-        category: 'jardin',
-        subcategory: 'herramientas de jardín',
-        brand: 'Husqvarna',
-        price: 299.99,
-        oldPrice: 349.99,
-        rating: 4.9,
-        reviewCount: 48,
-        inStock: 5,
-        isNew: false,
-        isOnSale: true,
-        image: 'img/motosierra.jpg',
-        images: [
-            'img/motosierra.jpg',
-            'img/motosierra.jpg'
-        ],
-        shortDescription: 'Motosierra potente con motor de 50cc y barra de 18 pulgadas.',
-        description: 'Motosierra Husqvarna profesional con potente motor de 2 tiempos. Sistema anti-vibración y freno de cadena para mayor seguridad.'
+// Filtros extra que vienen de la URL (buscador y ofertas)
+const urlFilters = { search: '', promo: false };
+
+// Intenta cargar el catalogo desde la API; si falla, deja el catalogo local
+async function syncProductsFromApi() {
+    try {
+        const data = await api.products();
+        if (!Array.isArray(data.products)) throw new Error('Cat?logo inv?lido');
+        products = data.products;
+        catalogAvailable = true;
+    } catch (e) {
+        products = [];
+        catalogAvailable = false;
+        console.warn('No se pudo cargar el cat?logo:', e.message);
     }
-];
+}
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if we're on the products page
+document.addEventListener('DOMContentLoaded', async function() {
+    const needsProducts = document.getElementById('products-grid') ||
+        document.getElementById('product-main-image') ||
+        document.getElementById('featured-products') ||
+        document.getElementById('related-products');
+    if (!needsProducts) return;
+
+    await syncProductsFromApi();
+    if (!catalogAvailable) {
+        const container = document.getElementById('products-grid') || document.getElementById('featured-products');
+        if (container) container.textContent = 'No se pudo cargar el cat?logo. Comprueba la conexi?n y recarga la p?gina.';
+        if (document.getElementById('product-main-image')) {
+            const button = document.getElementById('add-to-cart');
+            if (button) button.disabled = true;
+            alert('No se pudo cargar el producto. Comprueba la conexi?n y recarga la p?gina.');
+        }
+        return;
+    }
+
     if (document.getElementById('products-grid')) {
         initProductsPage();
     }
-    
-    // Check if we're on the product detail page
     if (document.getElementById('product-main-image')) {
         initProductDetailPage();
     }
-    
-    // Check if we're on the home page with featured products
     if (document.getElementById('featured-products')) {
         loadFeaturedProducts();
     }
-    
-    // Check if we're on a page with related products
     if (document.getElementById('related-products')) {
         loadRelatedProducts();
     }
@@ -218,10 +60,16 @@ function initProductsPage() {
     // Get URL parameters for any filtering
     const params = getUrlParams();
     const categoryFilter = params.category || 'all';
+    urlFilters.search = (params.search || '').trim().toLowerCase();
+    urlFilters.promo = params.promo === 'true';
     
     // Update page title based on category
     const productsTitle = document.getElementById('products-title');
-    if (productsTitle && categoryFilter !== 'all') {
+    if (productsTitle && urlFilters.search) {
+        productsTitle.textContent = `Resultados para "${params.search}"`;
+    } else if (productsTitle && urlFilters.promo) {
+        productsTitle.textContent = 'Ofertas especiales';
+    } else if (productsTitle && categoryFilter !== 'all') {
         productsTitle.textContent = `Productos - ${capitalizeFirstLetter(categoryFilter)}`;
     }
     
@@ -241,7 +89,7 @@ function initProductsPage() {
         item.addEventListener('click', function(e) {
             e.preventDefault();
             const category = this.getAttribute('data-category');
-            window.location.href = `products.html${category !== 'all' ? `?category=${category}` : ''}`;
+            window.location.href = `products.html${category !== 'all' ? `?category=${encodeURIComponent(category)}` : ''}`;
         });
     });
     
@@ -251,7 +99,7 @@ function initProductsPage() {
     
     if (priceRange && priceValue) {
         priceRange.addEventListener('input', function() {
-            priceValue.textContent = `$${this.value}`;
+            priceValue.textContent = formatPrice(Number(this.value));
         });
     }
     
@@ -300,7 +148,7 @@ function initProductsPage() {
         applyFiltersBtn.addEventListener('click', function() {
             // Get selected filters
             const selectedBrands = getSelectedCheckboxValues('brand');
-            const maxPrice = document.getElementById('price-range').value;
+            const maxPrice = Number(document.getElementById('price-range').value);
             
             // Apply filters
             loadProducts(categoryFilter, sortBy.value, selectedBrands, maxPrice);
@@ -316,7 +164,7 @@ function initProductsPage() {
             
             if (priceRange) {
                 priceRange.value = priceRange.max;
-                priceValue.textContent = `$${priceRange.max}`;
+                priceValue.textContent = formatPrice(Number(priceRange.max));
             }
             
             // Reset to default view
@@ -335,7 +183,11 @@ function initProductDetailPage() {
     const productId = parseInt(params.id) || 1; // Default to first product if no ID
     
     // Find the product in our data
-    const product = products.find(p => p.id === productId) || products[0];
+    const product = products.find(p => p.id === productId);
+    if (!product) {
+        window.location.href = 'products.html';
+        return;
+    }
     
     // Update product details in the page
     document.title = `${product.name} - FerreMax`;
@@ -349,7 +201,7 @@ function initProductDetailPage() {
     // Update product image
     const mainImage = document.getElementById('product-main-image');
     if (mainImage) {
-        mainImage.src = product.images[0] || product.image;
+        mainImage.src = imgUrl(product.images[0] || product.image);
         mainImage.alt = product.name;
     }
     
@@ -360,20 +212,12 @@ function initProductDetailPage() {
             if (index < product.images.length) {
                 const img = thumb.querySelector('img');
                 if (img) {
-                    img.src = product.images[index].replace('500x500', '100x100');
+                    img.src = imgUrl(product.images[index].replace('500x500', '100x100'));
                     img.alt = `${product.name} ${index + 1}`;
                 }
-                thumb.setAttribute('data-src', product.images[index]);
+                thumb.setAttribute('data-src', imgUrl(product.images[index]));
                 
-                // Add click event to change main image
-                thumb.addEventListener('click', function() {
-                    const src = this.getAttribute('data-src');
-                    mainImage.src = src;
-                    
-                    // Update active thumbnail
-                    thumbnails.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                });
+
             }
         });
     }
@@ -386,6 +230,8 @@ function initProductDetailPage() {
     if (product.oldPrice) {
         document.getElementById('product-old-price').textContent = formatPrice(product.oldPrice);
         document.getElementById('product-old-price').style.display = 'inline';
+        const badge = document.querySelector('.discount-badge');
+        if (badge) badge.textContent = `-${Math.round((1 - product.price / product.oldPrice) * 100)}%`;
     } else {
         document.getElementById('product-old-price').style.display = 'none';
         document.querySelector('.discount-badge').style.display = 'none';
@@ -413,9 +259,12 @@ function initProductDetailPage() {
     
     // Initialize add to cart button
     const addToCartBtn = document.getElementById('add-to-cart');
+    addToCartBtn.disabled = product.inStock <= 0;
+    quantityInput.min = '1';
+    quantityInput.max = String(product.inStock);
     addToCartBtn.addEventListener('click', function() {
         const quantity = parseInt(quantityInput.value);
-        addToCart(product, quantity);
+        if (!addToCart(product, quantity)) return;
         
         // Show confirmation message
         alert(`${quantity} x ${product.name} añadido al carrito`);
@@ -448,20 +297,29 @@ function initProductDetailPage() {
 }
 
 // Load products with filters
-function loadProducts(category = 'all', sort = 'relevance', brands = [], maxPrice = 1000) {
+function loadProducts(category = 'all', sort = 'relevance', brands = [], maxPrice = Infinity) {
     const productsGrid = document.getElementById('products-grid');
     if (!productsGrid) return;
     
     // Filter products by category
-    let filteredProducts = products;
+    let filteredProducts = [...products];
     
     if (category !== 'all') {
         filteredProducts = products.filter(product => product.category === category);
     }
     
+    // Filtros que vienen de la URL
+    if (urlFilters.search) {
+        filteredProducts = filteredProducts.filter(product =>
+            `${product.name} ${product.brand || ''} ${product.shortDescription || ''}`.toLowerCase().includes(urlFilters.search));
+    }
+    if (urlFilters.promo) {
+        filteredProducts = filteredProducts.filter(product => product.isOnSale);
+    }
+
     // Apply brand filter if any brands selected
     if (brands.length > 0) {
-        filteredProducts = filteredProducts.filter(product => brands.includes(product.brand.toLowerCase()));
+        filteredProducts = filteredProducts.filter(product => brands.includes((product.brand || '').toLowerCase()));
     }
     
     // Apply price filter
@@ -529,13 +387,13 @@ function createProductCard(product) {
     
     card.innerHTML = `
         <div class="product-image">
-            <img src="${product.image}" alt="${product.name}">
+            <img src="${escapeHtml(imgUrl(product.image))}" alt="${escapeHtml(product.name)}">
             ${badgesHtml}
         </div>
         <div class="product-info">
-            <div class="product-category">${product.category}</div>
+            <div class="product-category">${escapeHtml(product.category)}</div>
             <h3 class="product-title">
-                <a href="product-detail.html?id=${product.id}">${product.name}</a>
+                <a href="product-detail.html?id=${Number(product.id)}">${escapeHtml(product.name)}</a>
             </h3>
             <div class="product-price">
                 ${product.oldPrice ? `<span class="old-price">${formatPrice(product.oldPrice)}</span>` : ''}
@@ -545,7 +403,7 @@ function createProductCard(product) {
                 ${ratingHtml}
                 <span>(${product.reviewCount})</span>
             </div>
-            <p class="product-description" style="display: none;">${product.shortDescription}</p>
+            <p class="product-description" style="display: none;">${escapeHtml(product.shortDescription)}</p>
             <div class="product-actions">
                 <button class="btn btn-primary add-to-cart" data-id="${product.id}" ${product.inStock === 0 ? 'disabled' : ''}>
                     ${product.inStock === 0 ? 'Agotado' : '<i class="fas fa-cart-plus"></i> Añadir'}
@@ -562,7 +420,7 @@ function createProductCard(product) {
     if (addToCartBtn && product.inStock > 0) {
         addToCartBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            addToCart(product, 1);
+            if (!addToCart(product, 1)) return;
             
             // Show confirmation
             alert(`${product.name} añadido al carrito`);
@@ -630,7 +488,8 @@ function loadRelatedProducts() {
     const productId = parseInt(params.id) || 1;
     
     // Find the current product
-    const currentProduct = products.find(p => p.id === productId) || products[0];
+    const currentProduct = products.find(p => p.id === productId);
+    if (!currentProduct) return;
     
     // Get products in the same category but not the current product
     const relatedProducts = products
@@ -647,12 +506,21 @@ function loadRelatedProducts() {
 
 // Add a product to cart
 function addToCart(product, quantity = 1) {
+    if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 1000) {
+        alert('Ingresa una cantidad entera entre 1 y 1000.');
+        return false;
+    }
     // Get current cart from localStorage
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cart = readStoredList('cart');
     
     // Check if product already in cart
     const existingProductIndex = cart.findIndex(item => item.id === product.id);
     
+    const totalQuantity = quantity + (existingProductIndex >= 0 ? cart[existingProductIndex].quantity : 0);
+    if (totalQuantity > product.inStock || totalQuantity > 1000) {
+        alert('La cantidad supera las unidades disponibles.');
+        return false;
+    }
     if (existingProductIndex >= 0) {
         // Update quantity
         cart[existingProductIndex].quantity += quantity;
@@ -661,6 +529,7 @@ function addToCart(product, quantity = 1) {
         cart.push({
             id: product.id,
             name: product.name,
+            code: product.code,
             price: product.price,
             image: product.image,
             quantity: quantity
@@ -668,7 +537,8 @@ function addToCart(product, quantity = 1) {
     }
     
     // Save cart to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
+    writeStoredList('cart', cart);
+    return true;
 }
 
 // Helper functions

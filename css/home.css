@@ -221,3 +221,9 @@
         font-size: 1.75rem;
     }
 }
+/* Las tarjetas de categoría ahora son enlaces */
+a.category-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
