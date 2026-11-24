@@ -1,0 +1,48 @@
+/* Font Awesome Free 6.4.0 · license in fonts/FA-LICENSE.txt */
+@font-face { font-family: "FM solid"; src: url("../fonts/fa-solid.woff2") format("woff2"); font-weight: 900; font-display: block; }
+.fas { font-family: "FM solid"; font-weight: 900; font-style: normal; }
+@font-face { font-family: "FM regular"; src: url("../fonts/fa-regular.woff2") format("woff2"); font-weight: 400; font-display: block; }
+.far { font-family: "FM regular"; font-weight: 400; font-style: normal; }
+@font-face { font-family: "FM brands"; src: url("../fonts/fa-brands.woff2") format("woff2"); font-weight: 400; font-display: block; }
+.fab { font-family: "FM brands"; font-weight: 400; font-style: normal; }
+.fa-trash-alt::before { content: "\f2ed"; }
+.fa-sign-out-alt::before { content: "\f2f5"; }
+.fa-user-check::before { content: "\f4fc"; }
+.fa-bars::before { content: "\f0c9"; }
+.fa-lightbulb::before { content: "\f0eb"; }
+.fa-list::before { content: "\f03a"; }
+.fa-cart-plus::before { content: "\f217"; }
+.fa-edit::before { content: "\f044"; }
+.fa-shopping-bag::before { content: "\f290"; }
+.fa-users::before { content: "\f0c0"; }
+.fa-user::before { content: "\f007"; }
+.fa-star::before { content: "\f005"; }
+.fa-check-circle::before { content: "\f058"; }
+.fa-shield-alt::before { content: "\f3ed"; }
+.fa-layer-group::before { content: "\f5fd"; }
+.fa-star-half-alt::before { content: "\f5c0"; }
+.fa-leaf::before { content: "\f06c"; }
+.fa-hard-hat::before { content: "\f807"; }
+.fa-cash-register::before { content: "\f788"; }
+.fa-heart::before { content: "\f004"; }
+.fa-wrench::before { content: "\f0ad"; }
+.fa-tags::before { content: "\f02c"; }
+.fa-th::before { content: "\f00a"; }
+.fa-truck::before { content: "\f0d1"; }
+.fa-cog::before { content: "\f013"; }
+.fa-shopping-cart::before { content: "\f07a"; }
+.fa-tachometer-alt::before { content: "\f625"; }
+.fa-boxes::before { content: "\f468"; }
+.fa-search::before { content: "\f002"; }
+.fa-user-circle::before { content: "\f2bd"; }
+.fa-plus::before { content: "\2b"; }
+.fa-times::before { content: "\f00d"; }
+.fa-chevron-left::before { content: "\f053"; }
+.fa-chevron-right::before { content: "\f054"; }
+.fa-percentage::before { content: "\25"; }
+.fa-exchange-alt::before { content: "\f362"; }
+.fa-dollar-sign::before { content: "\24"; }
+.fa-facebook-f::before { content: "\f39e"; }
+.fa-instagram::before { content: "\f16d"; }
+.fa-youtube::before { content: "\f167"; }
+.fa-twitter::before { content: "\f099"; }

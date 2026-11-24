@@ -10,32 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize product gallery
 function initProductGallery() {
-    const thumbnails = document.querySelectorAll('.thumbnail');
     const mainImage = document.getElementById('product-main-image');
-    
-    if (!thumbnails.length || !mainImage) return;
-    
-    thumbnails.forEach(thumbnail => {
-        thumbnail.addEventListener('click', function() {
-            // Remove active class from all thumbnails
-            thumbnails.forEach(t => t.classList.remove('active'));
-            
-            // Add active class to clicked thumbnail
-            this.classList.add('active');
-            
-            // Update main image
-            const imageSrc = this.getAttribute('data-src');
-            if (!imageSrc) return;
-            mainImage.src = imageSrc;
-            
-            // Optional: Add a fade effect
-            mainImage.classList.add('fade');
-            setTimeout(() => {
-                mainImage.classList.remove('fade');
-            }, 300);
-        });
-    });
-    
+
     // Optional: Add zoom effect on hover
     if (mainImage) {
         const imageContainer = mainImage.parentElement;

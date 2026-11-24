@@ -29,4 +29,4 @@ python app.py --sync-catalog                    # aplicar precios/datos de seed/
 
 ## Modelo ER integrado
 
-La API utiliza `database.py` y el esquema unificado de 30 tablas en `../database/schema.sql`. La base anterior se migra automaticamente con respaldo en `backups/`. Detalles y limites en [MIGRACION_ER.md](../docs/MIGRACION_ER.md). Las claves existentes se conservan. Los datos de Ferreteria se completan desde Configuracion del panel.
+La API utiliza `database.py` y el esquema unificado de 31 tablas en `../database/schema.sql`. La base anterior se migra automaticamente con respaldo en `backups/`. Detalles y limites en [MIGRACION_ER.md](../docs/MIGRACION_ER.md). Las claves existentes se conservan. Los datos de Ferreteria se completan desde Configuracion del panel.

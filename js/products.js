@@ -205,23 +205,35 @@ function initProductDetailPage() {
         mainImage.alt = product.name;
     }
     
-    // Update thumbnails
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    if (thumbnails.length > 0 && product.images.length > 0) {
-        thumbnails.forEach((thumb, index) => {
-            if (index < product.images.length) {
-                const img = thumb.querySelector('img');
-                if (img) {
-                    img.src = imgUrl(product.images[index].replace('500x500', '100x100'));
-                    img.alt = `${product.name} ${index + 1}`;
-                }
-                thumb.setAttribute('data-src', imgUrl(product.images[index]));
-                
-
-            }
-        });
+    const gallery = document.querySelector('.product-thumbnails');
+    for (const [index, image] of product.images.entries()) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'thumbnail' + (index === 0 ? ' active' : '');
+        const photo = new Image();
+        photo.src = imgUrl(image);
+        photo.alt = product.name + ' · imagen ' + (index + 1);
+        button.append(photo);
+        button.onclick = () => {
+            gallery.querySelector('.active')?.classList.remove('active');
+            button.classList.add('active');
+            mainImage.src = photo.src;
+        };
+        gallery.append(button);
     }
-    
+    const categoryLink = document.getElementById('product-category-link');
+    categoryLink.textContent = product.category;
+    categoryLink.href = 'products.html?category=' + encodeURIComponent(product.category);
+    const availability = document.querySelector('.product-availability');
+    availability.textContent = product.inStock === 0 ? 'Agotado' : (product.inStock <= 5 ? 'Stock bajo' : 'En stock') + ' · ' + product.inStock;
+    availability.classList.add(product.inStock === 0 ? 'danger' : product.inStock <= 5 ? 'warning' : 'success');
+    const summary = product.reviewCount ? product.rating + ' / 5 · ' + product.reviewCount + ' valoraciones' : 'Sin valoraciones';
+    document.querySelector('.product-meta .product-rating').textContent = summary;
+    document.getElementById('review-summary').textContent = summary;
+    const specs = [['Código', product.code], ['Marca', product.brand], ['Categoría', product.category], ['Subcategoría', product.subcategory]];
+    document.getElementById('spec-rows').innerHTML = specs.filter(([,value]) => value).map(([label,value]) =>
+        `<tr><th scope="row">${label}</th><td>${escapeHtml(value)}</td></tr>`).join('');
+
     // Update product info
     document.getElementById('product-name').textContent = product.name;
     document.getElementById('product-code').textContent = product.code;
@@ -254,7 +266,7 @@ function initProductDetailPage() {
     
     increaseBtn.addEventListener('click', function() {
         const currentValue = parseInt(quantityInput.value);
-        quantityInput.value = currentValue + 1;
+        quantityInput.value = Math.min(product.inStock, currentValue + 1);
     });
     
     // Initialize add to cart button

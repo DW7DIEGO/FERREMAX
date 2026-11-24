@@ -345,3 +345,9 @@
         justify-content: flex-end;
     }
 }
+@media (min-width: 1100px) {
+    .cart-container { max-width: 1450px; padding: 32px 4vw; }
+    .cart-container h1 { font-size: 32px; letter-spacing: -1.5px; }
+    .cart-items, .cart-summary { border: 1px solid var(--line); border-radius: 12px; }
+    .cart-summary { position: sticky; top: 100px; align-self: start; }
+}

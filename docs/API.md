@@ -79,3 +79,7 @@ La API conserva los nombres JSON usados por la web aunque internamente las tabla
 `POST /orders` requiere `address` (5 a 255 caracteres), `city` (2 a 100) y `phone` (7 a 25, numeros y separadores). Guarda carrito, direccion, pedido, envio, detalle, movimiento e historial en una transaccion. Tarifas iniciales: 20000 estandar, 40000 express, gratis desde 200000; se pueden cambiar en Configuracion.
 
 Estados: pendiente -> pagado -> enviado -> entregado; se puede cancelar desde cualquier estado no cancelado. Repetir el mismo estado es idempotente. Otros saltos devuelven 409. Confirmar pago crea Venta y Pago una sola vez; cancelar devuelve stock y anula el registro interno, sin ejecutar reembolsos bancarios. Ventas del panel suma Venta confirmada.
+
+### Venta de mostrador
+
+`POST /api/admin/pos` registra un cobro manual para un cliente activo. Requiere sesión de administrador. El cuerpo incluye `customer` (ID de usuario), `items` (producto y cantidad con el mismo formato de pedidos), `taxRate` (porcentaje adicional), `expectedTotal` (COP) y `requestId` (UUID del ticket). La API compara el importe con los precios actuales y registra pedido entregado, venta, pago manual y salida de inventario en una transacción. Repetir una solicitud idéntica con la misma clave devuelve el pedido existente.

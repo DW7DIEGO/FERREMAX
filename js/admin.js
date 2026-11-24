@@ -5,10 +5,12 @@ const ORDER_TRANSITIONS = {pendiente: ['pagado','cancelado'], pagado: ['enviado'
 const ORDER_STATUSES = ['pendiente', 'pagado', 'enviado', 'entregado', 'cancelado'];
 
 document.addEventListener('DOMContentLoaded', async function () {
-    initAdminNavigation();
+
     initLogout();
     const allowed = await checkAdminAuth();
     if (!allowed) return;
+    initAdminNavigation();
+    initPos();
     initProductsPage();
     initManagement();
     loadDashboard();
@@ -66,7 +68,7 @@ function initLogout() {
 function initAdminNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
     const adminPages = document.querySelectorAll('.admin-page');
-    const loaders = { dashboard: loadDashboard, products: loadProductsTable, orders: loadOrders, customers: loadCustomers, categories: loadCategories, promotions: loadPromotions, settings: loadSettings };
+    const loaders = { dashboard: loadDashboard, products: loadProductsTable, pos: loadPos, orders: loadOrders, customers: loadCustomers, categories: loadCategories, promotions: loadPromotions, settings: loadSettings };
 
     navItems.forEach(item => {
         item.addEventListener('click', function (e) {
@@ -74,6 +76,9 @@ function initAdminNavigation() {
             const target = this.getAttribute('data-page');
             navItems.forEach(n => n.classList.remove('active'));
             this.classList.add('active');
+            navItems.forEach(n => n.removeAttribute('aria-current'));
+            this.setAttribute('aria-current','page');
+            document.getElementById('section-name').textContent = this.textContent.trim();
 
             let pageId = `${target}-page`;
             if (!document.getElementById(pageId)) pageId = 'soon-page';
@@ -111,18 +116,18 @@ function statusClass(status) {
 async function loadDashboard() {
     try {
         const { stats } = await api.adminStats();
-        document.getElementById('stat-sales').textContent = formatPrice(stats.sales);
-        document.getElementById('stat-sales-note').textContent = 'Pedidos pagados, enviados y entregados';
-        document.getElementById('stat-orders').textContent = stats.orders;
+        document.getElementById('stat-sales').textContent = formatPrice(stats.todaySales);
+        document.getElementById('stat-sales-note').textContent = 'Cobros confirmados · COP';
+        document.getElementById('stat-orders').textContent = stats.activeOrders;
         document.getElementById('stat-orders-note').textContent = `${stats.pendingOrders} pendientes`;
         document.getElementById('stat-customers').textContent = stats.customers;
         document.getElementById('stat-customers-note').textContent = 'Usuarios con rol cliente';
-        document.getElementById('stat-products').textContent = stats.products;
-        document.getElementById('stat-products-note').textContent = `${stats.lowStock} con poco stock`;
+        document.getElementById('stat-products').textContent = stats.lowStock;
+        document.getElementById('stat-products-note').textContent = `${stats.products} referencias activas`;
 
         const list = document.getElementById('recent-orders');
         if (!stats.recentOrders.length) {
-            list.innerHTML = '<p class="empty-note">Todavía no hay pedidos.</p>';
+            list.innerHTML = '<p class="empty-note">Los pedidos aparecerán aquí cuando registres la primera venta.</p>';
             return;
         }
         list.innerHTML = stats.recentOrders.map(o => `
@@ -150,7 +155,7 @@ function initProductsPage() {
     });
     document.getElementById('product-form').addEventListener('submit', saveProduct);
     ['product-search', 'product-category-filter', 'product-stock-filter'].forEach(id => {
-        document.getElementById(id).addEventListener('input', renderProductsTable);
+        document.getElementById(id).addEventListener('input', () => { pages.products = 1; renderProductsTable(); });
     });
 
     // Un solo listener para editar/eliminar (las filas se vuelven a dibujar)
@@ -185,6 +190,12 @@ async function loadProductsTable() {
         document.getElementById('pf-categories').innerHTML =
             categories.map(c => `<option value="${escapeHtml(c)}"></option>`).join('');
         renderProductsTable();
+        const totals = new Map();
+        for (const p of data.products) totals.set(p.category, (totals.get(p.category) || 0) + 1);
+        const groups = [...totals].sort((a,b) => b[1] - a[1]);
+        document.getElementById('category-summary').innerHTML = groups.map(([category, count]) =>
+            `<div class="category-stat"><span>${escapeHtml(category)}</span><meter min="0" max="${groups[0][1]}" value="${count}" aria-label="${escapeHtml(category)}"></meter><b>${count}</b></div>`
+        ).join('') || '<p class="empty-note">Sin referencias activas.</p>';
     } catch (error) {
         showAdminError(error);
     }
@@ -201,11 +212,12 @@ function renderProductsTable() {
         (!stock || (stock === 'out' && p.inStock === 0) || (stock === 'low' && p.inStock > 0 && p.inStock <= 5) || (stock === 'ok' && p.inStock > 5)));
 
     const tbody = document.getElementById('products-tbody');
+    const visible = paginate('products', rows, renderProductsTable);
     if (!rows.length) {
         tbody.innerHTML = '<tr><td colspan="7" class="empty-note">No hay productos para mostrar.</td></tr>';
         return;
     }
-    tbody.innerHTML = rows.map(p => {
+    tbody.innerHTML = visible.map(p => {
         const cls = p.inStock === 0 ? 'danger' : p.inStock <= 5 ? 'warning' : 'success';
         return `<tr>
             <td>${Number(p.id)}</td>
@@ -213,7 +225,7 @@ function renderProductsTable() {
             <td>${escapeHtml(p.name)}<br><small>${escapeHtml(p.code)}</small></td>
             <td>${escapeHtml(p.category)}</td>
             <td>${formatPrice(p.price)}</td>
-            <td><span class="status ${cls}">${Number(p.inStock)}</span></td>
+            <td><span class="status ${cls}">${Number(p.inStock)} · ${cls === 'danger' ? 'Agotado' : cls === 'warning' ? 'Stock bajo' : 'En stock'}</span></td>
             <td class="actions">
                 <button class="btn-icon" data-action="edit" data-id="${Number(p.id)}" title="Editar"><i class="fas fa-edit"></i></button>
                 <button class="btn-icon" data-action="delete" data-id="${Number(p.id)}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
@@ -233,12 +245,12 @@ function openProductModal(product) {
     document.getElementById('pf-new').checked = !!product?.isNew;
     document.getElementById('pf-sale').checked = !!product?.isOnSale;
     document.getElementById('product-form-error').style.display = 'none';
-    document.getElementById('product-modal').style.display = 'flex';
+    document.getElementById('product-modal').showModal();
     document.getElementById('pf-name').focus();
 }
 
 function closeProductModal() {
-    document.getElementById('product-modal').style.display = 'none';
+    document.getElementById('product-modal').close();
 }
 
 async function saveProduct(e) {
@@ -289,7 +301,7 @@ async function loadOrders() {
             <td>${escapeHtml(o.customer)}<br><small>${escapeHtml(o.email)}</small></td>
             <td>${Number(o.units)}</td>
             <td>${formatPrice(o.total)}</td>
-            <td><select class="order-status" data-id="${Number(o.id)}" data-current="${escapeHtml(o.status)}"
+            <td><select class="order-status ${statusClass(o.status)}" data-id="${Number(o.id)}" data-current="${escapeHtml(o.status)}"
                 ${o.status === 'cancelado' ? 'disabled' : ''}>
                 ${ORDER_STATUSES.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''} ${s !== o.status && !(ORDER_TRANSITIONS[o.status] || []).includes(s) ? 'disabled' : ''}>${s}</option>`).join('')}
             </select></td><td><button type="button" class="btn btn-secondary" data-order-detail="${Number(o.id)}">Ver detalle</button></td>
@@ -319,20 +331,38 @@ async function loadOrders() {
 // Usuarios
 // ---------------------------------------------------------------------------
 async function loadCustomers() {
-    const tbody = document.getElementById('customers-tbody');
     try {
         const { customers } = await api.adminCustomers();
+        adminState.customers = customers;
+        renderCustomers();
+    } catch (error) { showAdminError(error); }
+}
+
+function renderCustomers() {
+    const tbody = document.getElementById('customers-tbody');
+    const query = document.getElementById('customer-search').value.trim().toLowerCase();
+    const state = document.getElementById('customer-filter').value;
+    const rows = (adminState.customers || []).filter(c => (c.name + ' ' + c.email).toLowerCase().includes(query) && (!state || c.active === (state === 'active')));
+    const customers = paginate('customers', rows, renderCustomers);
         tbody.innerHTML = customers.map(c => `<tr>
             <td>${Number(c.id)}</td>
             <td>${escapeHtml(c.name)}</td>
             <td>${escapeHtml(c.email)}</td>
-            <td><span class="status ${c.role === 'admin' ? 'warning' : 'success'}">${escapeHtml(c.role)}</span></td>
+            <td><span class="status ${c.role === 'admin' ? 'warning' : 'success'}">${escapeHtml(c.role)}</span><small>${c.active ? "Activo" : "Inactivo"}</small></td>
             <td>${escapeHtml(formatDate(c.createdAt))}</td>
             <td>${escapeHtml(formatDate(c.lastAccess))}</td>
-        </tr>`).join('');
-    } catch (error) {
-        showAdminError(error);
-    }
+        </tr>`).join('') || '<tr><td colspan="6" class="empty-note">Sin coincidencias.</td></tr>';
+}
+
+const pages = { customers: 1, products: 1 };
+function paginate(key, rows, render) {
+    const count = Math.max(1, Math.ceil(rows.length / 10));
+    pages[key] = Math.min(count, pages[key]);
+    const page = pages[key];
+    const pager = document.getElementById(key + '-pager');
+    pager.innerHTML = `<span>${rows.length} registros</span><button type="button" ${page === 1 ? 'disabled' : ''}>Anterior</button> ${page} / ${count} <button type="button" ${page === count ? 'disabled' : ''}>Siguiente</button>`;
+    pager.querySelectorAll('button').forEach((button, index) => button.onclick = () => { pages[key] += index ? 1 : -1; render(); });
+    return rows.slice((page - 1) * 10, page * 10);
 }
 
 function initManagement() {
@@ -359,9 +389,44 @@ function initManagement() {
             await loadSettings(); document.getElementById('settings-result').textContent = 'Tarifas guardadas';
         } catch (error) { showAdminError(error); }
     });
-    document.getElementById('admin-global-search').addEventListener('input', e => {
-        document.querySelector('[data-page="products"]').click();
-        document.getElementById('product-search').value = e.target.value; renderProductsTable();
+    const open = page => document.querySelector(`[data-page="${page}"]`).click();
+    document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => open(b.dataset.open));
+    for (const id of ['customer-search','customer-filter']) {
+        document.getElementById(id).oninput = () => { pages.customers = 1; renderCustomers(); };
+    }
+    document.getElementById('today').textContent = new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',timeZone:'America/Bogota'});
+    const search = document.getElementById('admin-global-search');
+    const results = document.getElementById('global-results');
+    function searchWorkspace() {
+        const q = search.value.trim().toLowerCase();
+        results.replaceChildren();
+        results.hidden = !q;
+        if (!q) return;
+        const add = (title, action) => {
+            const button = document.createElement('button');
+            button.textContent = title;
+            button.onclick = () => { action(); results.hidden = true; search.value = ''; };
+            results.append(button);
+        };
+        for (const link of document.querySelectorAll('.nav-item')) {
+            if (link.textContent.toLowerCase().includes(q)) add(link.textContent.trim(), () => link.click());
+        }
+        for (const product of adminState.products.filter(p => (p.name + ' ' + p.code).toLowerCase().includes(q)).slice(0,6)) {
+            add(product.name + ' · ' + product.code, () => {
+                document.getElementById('product-search').value = product.code;
+                document.getElementById('product-category-filter').value = document.getElementById('product-stock-filter').value = '';
+                pages.products = 1;
+                open('products');
+            });
+        }
+        if (!results.children.length) results.textContent = 'Sin coincidencias';
+    }
+    search.oninput = search.onfocus = searchWorkspace;
+    document.addEventListener('click', e => { if (!e.target.closest('.admin-search')) results.hidden = true; });
+    document.addEventListener('keydown', e => {
+        if (e.key === '/' && !e.target.closest('input,textarea,select,dialog') && !document.getElementById('product-modal').open) { e.preventDefault(); search.focus(); }
+        if (e.key === 'Escape') { results.hidden = true; closeProductModal(); }
+        if (e.key === 'Enter' && e.target === search && !results.hidden) results.querySelector('button')?.click();
     });
 }
 async function loadCategories() {
@@ -385,7 +450,7 @@ async function loadPromotions() {
         for (const product of adminState.products) {
             const row = document.createElement('p'); const button = document.createElement('button');
             button.className = 'btn btn-secondary'; button.textContent = 'Editar'; button.onclick = () => openProductModal(product);
-            row.append(document.createTextNode(product.name + ' ? ' + formatPrice(product.price) + (product.isOnSale ? ' ? En oferta ' : ' ')), button); container.append(row);
+            row.append(document.createTextNode(product.name + ' · ' + formatPrice(product.price) + (product.isOnSale ? ' · En oferta ' : ' ')), button); container.append(row);
         }
     } catch (error) { showAdminError(error); }
 }
