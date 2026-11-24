@@ -8,45 +8,42 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/icons.css">
+    <link rel="stylesheet" href="../css/storefront.css">
 </head>
-<body>
+<body class="storefront">
     <header id="header">
         <!-- Header will be loaded via JavaScript -->
     </header>
 
     <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Herramientas y materiales</h1>
-                <p>Explora el catálogo de ferretería por categoría y consulta las existencias antes de comprar.</p>
-                <a href="products.html" class="btn btn-primary">Explorar catálogo &nbsp; →</a>
+        <section class="workshop" aria-label="Selección de taller">
+            <div class="scene-copy">
+                <div class="scene-kicker"><span></span> <span id="scene-kind">Herramientas eléctricas</span></div>
+                <h1 id="scene-title">Manos a<br>la obra.</h1>
+                <p id="scene-description">Taladros, sierras y accesorios para pasar del plano al primer corte.</p>
+                <a id="scene-link" class="action-solid" href="products.html?category=herramientas">Explorar herramientas <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="scene-photo"><img id="scene-image" src="../img/perforacion.webp" alt="Taladro perforando un tablero de madera en el taller" fetchpriority="high">
+                <div class="scene-controls" aria-label="Cambiar selección">
+                    <button type="button" id="prev-scene" aria-label="Selección anterior">←</button>
+                    <span id="scene-count" aria-live="polite">01 / 03</span>
+                    <button type="button" id="next-scene" aria-label="Siguiente selección">→</button>
+                </div>
             </div>
         </section>
 
         <section class="featured-categories">
-            <h2>Comprar por categoría</h2>
+            <div class="section-row"><h2>Compra por categoría</h2><a href="products.html">Ver catálogo completo <span>↗</span></a></div>
             <div class="categories-grid">
-                <a class="category-card" href="products.html?category=herramientas">
-                    <div class="category-icon"><i class="fas fa-wrench"></i></div>
-                    <h3>Herramientas</h3>
-                </a>
-                <a class="category-card" href="products.html?category=construccion">
-                    <div class="category-icon"><i class="fas fa-hard-hat"></i></div>
-                    <h3>Construcción</h3>
-                </a>
-                <a class="category-card" href="products.html?category=iluminacion">
-                    <div class="category-icon"><i class="fas fa-lightbulb"></i></div>
-                    <h3>Iluminación</h3>
-                </a>
-                <a class="category-card" href="products.html?category=jardin">
-                    <div class="category-icon"><i class="fas fa-leaf"></i></div>
-                    <h3>Jardín</h3>
-                </a>
+                <a class="category-card" href="products.html?category=herramientas"><img src="../img/martillo.webp" alt="" loading="lazy"><h3>Herramientas</h3><span aria-hidden="true">↗</span></a>
+                <a class="category-card" href="products.html?category=construccion"><img src="../img/Tipos-de-ladrillos.jpg" alt="" loading="lazy"><h3>Construcción</h3><span aria-hidden="true">↗</span></a>
+                <a class="category-card" href="products.html?category=iluminacion"><img src="../img/lamparas.webp" alt="" loading="lazy"><h3>Iluminación</h3><span aria-hidden="true">↗</span></a>
+                <a class="category-card" href="products.html?category=jardin"><img src="../img/jardin-frutal.webp" alt="" loading="lazy"><h3>Jardín</h3><span aria-hidden="true">↗</span></a>
             </div>
         </section>
 
         <section class="featured-products">
-            <h2>Productos destacados</h2>
+            <div class="section-row"><h2>Selección de productos</h2><a href="products.html?promo=true">Ver ofertas ↗</a></div>
             <div class="products-grid" id="featured-products">
                 <!-- Products will be loaded via JavaScript -->
             </div>
@@ -66,5 +63,6 @@
     <script src="../js/common.js"></script>
     <script src="../js/products.js"></script>
 
+    <script src="../js/home.js"></script>
 </body>
 </html>

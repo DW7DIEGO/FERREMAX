@@ -12,10 +12,11 @@ function loadHeader() {
     const header = document.getElementById('header');
     if (!header) return;
 
+    const storefront = document.body.classList.contains('storefront');
     header.innerHTML = `
         <div class="header-container container">
             <a href="home.html" class="logo">
-                <img class="brand-logo" src="../img/LOGO.jpeg" alt="FerreMax">
+                ${storefront ? shopWordmark() : '<img class="brand-logo" src="../img/LOGO.jpeg" alt="FerreMax">'}
 
             </a>
             
@@ -26,18 +27,19 @@ function loadHeader() {
             <nav>
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="home.html" class="nav-link">Inicio</a></li>
-                    <li><a href="products.html" class="nav-link">Productos</a></li>
+                    <li><a href="products.html" class="nav-link">Catálogo</a></li>
+                    ${storefront ? '<li><a class="nav-link sale-link" href="products.html?promo=true">Ofertas</a></li>' : ''}
                 </ul>
             </nav>
             
             <div class="header-actions">
-                <a href="#" class="header-icon" id="search-icon">
-                    <i class="fas fa-search"></i>
+                <a href="#" class="header-icon" id="search-icon" aria-label="Buscar en el catálogo">
+                    <i class="fas fa-search"></i>${storefront ? '<span>Buscar herramientas</span>' : ''}
                 </a>
                 <a href="login.html" class="header-icon" id="user-icon">
                     <i class="fas fa-user"></i>
                 </a>
-                <a href="cart.html" class="header-icon" id="cart-icon">
+                <a href="cart.html" class="header-icon" id="cart-icon" aria-label="Abrir carrito">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="badge">0</span>
                 </a>
@@ -62,7 +64,7 @@ function loadHeader() {
     const user = getCurrentUser();
     if (user && user.isAdmin) {
         const li = document.createElement('li');
-        li.innerHTML = '<a href="admin.html" class="nav-link">Administraci?n</a>';
+        li.innerHTML = '<a href="admin.html" class="nav-link">Administración</a>';
         document.getElementById('nav-menu').appendChild(li);
     }
 
@@ -98,11 +100,19 @@ function loadHeader() {
     }
 }
 
+function shopWordmark() {
+    return '<span class="shop-symbol" aria-hidden="true"></span><span class="shop-name">FERRE<span>MAX</span></span>';
+}
+
 // Load footer content
 function loadFooter() {
     const footer = document.getElementById('footer');
     if (!footer) return;
 
+    if (document.body.classList.contains('storefront')) {
+        footer.innerHTML = `<div class="shop-foot"><a href="home.html" class="logo">${shopWordmark()}</a><nav aria-label="Pie de página"><a href="products.html">Catálogo</a><a href="products.html?promo=true">Ofertas</a><a href="cart.html">Carrito</a></nav><small>FerreMax · Ferretería en línea</small></div>`;
+        return;
+    }
     footer.innerHTML = `
         <div class="container">
             <div class="footer-content">
