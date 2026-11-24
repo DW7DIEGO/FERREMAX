@@ -70,6 +70,7 @@ const api = {
     createOrder: (items, shipping = 'standard', address = '', phone = '', city = '') => apiRequest('/orders', { method: 'POST', body: { items, shipping, address, phone, city }, auth: true }),
 
     // --- Administración (el servidor exige rol admin en todas) ---
+    chargePos: body => apiRequest('/admin/pos', {method: 'POST', body, auth: true}),
     adminStore: () => apiRequest('/admin/store', {auth: true}),
     saveStore: body => apiRequest('/admin/store', {method: 'PUT', body, auth: true}),
     settings: () => apiRequest('/settings'),

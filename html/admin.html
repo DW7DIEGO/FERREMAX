@@ -6,15 +6,12 @@
     <title>Panel de Administración - FerreMax</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/admin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/icons.css">
 </head>
 <body>
     <div class="admin-container">
         <aside class="admin-sidebar">
-            <div class="admin-logo">
-                <h2>FerreMax</h2>
-                <span>Panel Admin</span>
-            </div>
+            <a class="admin-logo" href="home.html" aria-label="FerreMax, ir a la tienda"><img class="brand-logo" src="../img/LOGO.jpeg" alt="FerreMax"></a>
             
             <nav class="admin-nav">
                 <ul>
@@ -27,9 +24,10 @@
                     <li>
                         <a href="#" class="nav-item" data-page="products">
                             <i class="fas fa-boxes"></i>
-                            <span>Productos</span>
+                            <span>Inventario</span>
                         </a>
                     </li>
+                    <li><a href="#pos" class="nav-item" data-page="pos"><i class="fas fa-cash-register"></i><span>Punto de venta</span></a></li>
                     <li>
                         <a href="#" class="nav-item" data-page="orders">
                             <i class="fas fa-shopping-cart"></i>
@@ -64,7 +62,7 @@
             </nav>
             
             <div class="admin-logout">
-                <a href="#" id="admin-logout">
+                <div class="profile"><i class="fas fa-user-circle"></i><div><strong id="admin-user-name">Administrador</strong><small>Administración</small></div></div><a href="#" id="admin-logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Cerrar Sesión</span>
                 </a>
@@ -73,22 +71,13 @@
         
         <div class="admin-content">
             <header class="admin-header">
-                <div class="admin-search">
-                    <i class="fas fa-search"></i>
-                    <input type="search" id="admin-global-search" placeholder="Buscar productos...">
-                </div>
-                
-                <div class="admin-user">
-                    
-                    <div class="user-info">
-                        <span class="user-name" id="admin-user-name">Admin</span>
-                        <i class="fas fa-user-circle admin-avatar-icon"></i>
-                    </div>
-                </div>
+                <strong id="section-name">Dashboard</strong>
+                <div class="admin-search"><i class="fas fa-search"></i><input id="admin-global-search" type="search" aria-label="Buscar módulos y productos" placeholder="Buscar módulos y productos"><kbd>/</kbd><div id="global-results" hidden></div></div>
+                <button class="btn btn-primary" data-open="pos">+ Nueva venta</button>
             </header>
             
             <div class="admin-page" id="dashboard-page" style="display: block;">
-                <h1>Dashboard</h1>
+                <section class="overview-hero"><div><time id="today"></time><h1>Resumen de operación</h1><a class="hero-link" href="products.html">Ver catálogo <span aria-hidden="true">↗</span></a></div></section>
                 
                 <div class="stats-cards">
                     <div class="stat-card">
@@ -96,7 +85,7 @@
                             <i class="fas fa-dollar-sign"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>Ventas Totales</h3>
+                            <h3>Ventas del día</h3>
                             <p class="stat-value" id="stat-sales">…</p>
                             <p class="stat-change" id="stat-sales-note"></p>
                         </div>
@@ -107,7 +96,7 @@
                             <i class="fas fa-shopping-bag"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>Pedidos</h3>
+                            <h3>Pedidos activos</h3>
                             <p class="stat-value" id="stat-orders">…</p>
                             <p class="stat-change" id="stat-orders-note"></p>
                         </div>
@@ -129,7 +118,7 @@
                             <i class="fas fa-boxes"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>Productos</h3>
+                            <h3>Stock bajo</h3>
                             <p class="stat-value" id="stat-products">…</p>
                             <p class="stat-change" id="stat-products-note"></p>
                         </div>
@@ -138,9 +127,9 @@
                 
                 
                 
-                <div class="recent-activity">
+                <div class="overview-grid"><section class="panel"><h2>Inventario por categoría</h2><p class="caption">Referencias activas en el catálogo</p><div id="category-summary"></div></section><div class="recent-activity">
                     <div class="activity-header">
-                        <h3>Pedidos recientes</h3>
+                        <h2>Pedidos recientes</h2><button class="text-link" data-open="orders">Ver todos →</button>
                     </div>
                     <div class="activity-list" id="recent-orders">
                         <p class="empty-note">Cargando…</p>
@@ -148,9 +137,10 @@
                 </div>
             </div>
             
+            </div>
             <div class="admin-page" id="products-page" style="display: none;">
                 <div class="page-header">
-                    <h1>Gestión de Productos</h1>
+                    <h1>Inventario</h1>
                     <button class="btn btn-primary add-new" id="add-product-btn">
                         <i class="fas fa-plus"></i> Añadir Producto
                     </button>
@@ -158,12 +148,12 @@
 
                 <div class="page-filters">
                     <div class="search-bar">
-                        <input type="text" id="product-search" placeholder="Buscar por nombre o código...">
-                        <button class="btn-icon" type="button"><i class="fas fa-search"></i></button>
+                        <input aria-label="Buscar productos" type="search" id="product-search" placeholder="Buscar por nombre o código...">
+                        <span class="btn-icon" aria-hidden="true"><i class="fas fa-search"></i></span>
                     </div>
                     <div class="filter-options">
-                        <select id="product-category-filter"><option value="">Todas las categorías</option></select>
-                        <select id="product-stock-filter">
+                        <select aria-label="Filtro de inventario" id="product-category-filter"><option value="">Todas las categorías</option></select>
+                        <select aria-label="Filtro de inventario" id="product-stock-filter">
                             <option value="">Todo el stock</option>
                             <option value="ok">Con stock</option>
                             <option value="low">Poco stock (5 o menos)</option>
@@ -183,6 +173,7 @@
                         <tbody id="products-tbody"></tbody>
                     </table>
                 </div>
+                <nav class="pager" id="products-pager" aria-label="Paginación"></nav>
             </div>
 
             <div class="admin-page" id="orders-page" style="display: none;">
@@ -198,17 +189,35 @@
             </div>
 
             <div class="admin-page" id="customers-page" style="display: none;">
-                <div class="page-header"><h1>Usuarios</h1></div>
+                <div class="page-header"><h1>Clientes y usuarios</h1></div>
+                <div class="page-filters"><input type="search" id="customer-search" aria-label="Buscar clientes" placeholder="Buscar por nombre o correo"><select id="customer-filter" aria-label="Estado del usuario"><option value="">Todos los estados</option><option value="active">Activos</option><option value="inactive">Inactivos</option></select></div>
                 <div class="data-table-container">
                     <table class="data-table">
                         <thead>
-                            <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Registro</th><th>Último acceso</th></tr>
+                            <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Rol / Estado</th><th>Registro</th><th>Último acceso</th></tr>
                         </thead>
                         <tbody id="customers-tbody"></tbody>
                     </table>
                 </div>
+                <nav class="pager" id="customers-pager" aria-label="Paginación"></nav>
             </div>
 
+            <div class="admin-page" id="pos-page" style="display:none">
+                <h1>Punto de venta</h1>
+                <div class="pos-layout"><section class="panel"><h2>Productos</h2>
+                    <input id="pos-search" type="search" aria-label="Buscar en mostrador" placeholder="Buscar por nombre o código">
+                    <div id="pos-products"></div></section>
+                    <form id="pos-ticket" class="panel"><h2>Ticket de venta</h2>
+                    <label for="pos-customer">Cliente</label><select id="pos-customer" required></select>
+                    <div id="pos-lines"></div>
+                    <div class="amount"><span>Subtotal</span><strong id="pos-subtotal"></strong></div>
+                    <label for="pos-rate">Impuesto adicional (%)</label><input id="pos-rate" type="number" min="0" max="100" step="0.01" value="0" required>
+                    <div class="amount"><span>Impuesto</span><strong id="pos-tax"></strong></div>
+                    <div class="amount total"><span>Total</span><strong id="pos-total"></strong></div>
+                    <button class="btn btn-primary btn-block" id="pos-charge">Registrar cobro manual</button>
+                    <p id="pos-message" role="status"></p></form>
+                </div>
+            </div>
             <div class="admin-page" id="categories-page" style="display:none"><h1>Categorias</h1><p>Las categorias se crean al asignarlas a un producto. Puedes renombrarlas aqui; las categorias vacias no se muestran en la tienda.</p><div id="category-management"></div></div>
             <div class="admin-page" id="promotions-page" style="display:none"><h1>Promociones</h1><p>Edita el precio actual, precio anterior y la opcion En oferta. El precio actual es el que paga el cliente.</p><div id="promotion-management"></div></div>
             <div class="admin-page" id="settings-page" style="display:none"><h1>Configuracion</h1><h2>Datos de la ferretería</h2><form id="store-form"><div class="form-grid">
@@ -221,7 +230,7 @@
 </div><button class="btn btn-primary">Guardar datos</button><p id="store-result" role="status"></p></form><h2>Tarifas de envío</h2><form id="settings-form"><div class="form-group"><label>Envio estandar (COP)<input id="rate-standard" type="number" min="0" max="10000000" required></label></div><div class="form-group"><label>Envio express (COP)<input id="rate-express" type="number" min="0" max="10000000" required></label></div><div class="form-group"><label>Compra minima para envio gratis (COP)<input id="rate-freeFrom" type="number" min="0" max="10000000" required></label></div><button class="btn btn-primary">Guardar tarifas</button><p id="settings-result" role="status"></p></form><h2>Historial de administracion</h2><div id="activity-history"></div></div>
             <dialog id="order-detail"><h2>Detalle del pedido</h2><div id="order-detail-content"></div><form method="dialog"><button class="btn btn-secondary">Cerrar</button></form></dialog>
 
-            <div class="modal-overlay" id="product-modal" style="display: none;">
+            <dialog id="product-modal" aria-labelledby="product-modal-title">
                 <div class="modal">
                     <h2 id="product-modal-title">Nuevo producto</h2>
                     <form id="product-form" autocomplete="off">
@@ -248,7 +257,7 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </dialog>
         </div>
     </div>
 
@@ -258,6 +267,7 @@
 
     <script src="../js/auth.js"></script>
     <script src="../js/common.js"></script>
+    <script src="../js/pos.js"></script>
     <script src="../js/admin.js"></script>
 </body>
 </html>

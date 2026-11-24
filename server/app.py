@@ -15,6 +15,7 @@ import secrets
 import sqlite3
 import sys
 import time
+from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime, timedelta, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -194,7 +195,7 @@ class Handler(SimpleHTTPRequestHandler):
         path = unquote(urlparse(self.path).path)
         target = (ROOT_DIR / path.lstrip('/')).resolve()
         allowed = {'html': {'.html'}, 'css': {'.css'}, 'js': {'.js'},
-                   'img': {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.ico', '.svg'}}
+                   'fonts': {'.woff2'}, 'img': {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.ico', '.svg'}}
         try:
             relative = target.relative_to(ROOT_DIR)
         except ValueError:
@@ -425,6 +426,8 @@ class Handler(SimpleHTTPRequestHandler):
             items = conn.execute('SELECT COALESCE(d.Nombre_Producto,p.Nombre) AS nombre,d.Cantidad AS cantidad,d.Precio_Unitario AS precio_unit FROM Detalle_Pedido d JOIN Producto p ON p.Id_Producto=d.Id_Producto WHERE d.Id_Pedido=?', (int(parts[2]),)).fetchall()
             history = conn.execute('SELECT Estado_Anterior AS anterior,Estado_Nuevo AS nuevo,Fecha_Cambio AS fecha,Motivo AS motivo FROM Historial_Pedido WHERE Id_Pedido=? ORDER BY Id_Historial', (int(parts[2]),)).fetchall()
             return self.send_json({'order': dict(row), 'items': [dict(i) for i in items], 'history': [dict(h) for h in history]})
+        if sub == 'pos' and method == 'POST' and len(parts) == 2:
+            return self.create_order(conn, cashier=admin)
         if sub == 'stats' and method == 'GET' and len(parts) == 2:
             return self.admin_stats(conn)
         if sub == 'orders' and method == 'GET' and len(parts) == 2:
@@ -570,8 +573,8 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_json({'message': 'Producto eliminado'})
 
     # -- pedidos ------------------------------------------------------------
-    def create_order(self, conn):
-        user = self.current_user(conn)
+    def create_order(self, conn, cashier=None):
+        user = cashier or self.current_user(conn)
         data = self.read_json()
         items = data.get('items')
         if not isinstance(items, list) or not items or len(items) > 1000:
@@ -586,16 +589,34 @@ class Handler(SimpleHTTPRequestHandler):
             quantities[pid] = quantities.get(pid, 0) + qty
             if quantities[pid] > 1000:
                 raise ApiError(400, 'Cantidad invalida')
-        address, phone, city = data.get('address', ''), data.get('phone', ''), data.get('city', '')
-        if not isinstance(address, str) or not 5 <= len(address.strip()) <= 255 or not isinstance(phone, str) or not re.fullmatch(r'[+0-9 ()-]{7,25}', phone):
-            raise ApiError(400, 'Ingresa direccion y telefono de entrega validos')
-        if not isinstance(city, str) or not 2 <= len(city.strip()) <= 100:
-            raise ApiError(400, 'Ingresa la ciudad de entrega')
-        shipping = data.get('shipping', 'standard')
-        if shipping not in ('standard', 'express', 'free'):
-            raise ApiError(400, 'Metodo de envio invalido')
+        if cashier:
+            key = data.get('requestId')
+            customer = data.get('customer')
+            rate = data.get('taxRate', 0)
+            if not isinstance(key, str) or not re.fullmatch(r'[a-f0-9-]{36}', key):
+                raise ApiError(400, 'Identificador de venta inválido')
+            if type(customer) is not int or type(rate) not in (int, float) or not 0 <= rate <= 100:
+                raise ApiError(400, 'Cliente o porcentaje de impuesto inválido')
+            fingerprint = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+        else:
+            address, phone, city = data.get('address', ''), data.get('phone', ''), data.get('city', '')
+            if not isinstance(address, str) or not 5 <= len(address.strip()) <= 255 or not isinstance(phone, str) or not re.fullmatch(r'[+0-9 ()-]{7,25}', phone):
+                raise ApiError(400, 'Ingresa direccion y telefono de entrega validos')
+            if not isinstance(city, str) or not 2 <= len(city.strip()) <= 100:
+                raise ApiError(400, 'Ingresa la ciudad de entrega')
+            shipping = data.get('shipping', 'standard')
+            if shipping not in ('standard', 'express', 'free'):
+                raise ApiError(400, 'Metodo de envio invalido')
         with conn:
             conn.execute('BEGIN IMMEDIATE')
+            if cashier:
+                previous = conn.execute('SELECT x.Huella,p.Id_Pedido,p.Total,p.Estado FROM Cobro_POS x JOIN Pedido p USING(Id_Pedido) WHERE x.Clave=? AND x.Id_Usuario=?', (key, user['id_usuario'])).fetchone()
+                if previous:
+                    if previous['Huella'] != fingerprint:
+                        raise ApiError(409, 'El ticket ya fue registrado con otro contenido')
+                    return self.send_json({'order': {'id': previous['Id_Pedido'], 'total': previous['Total'], 'status': previous['Estado']}})
+                if not conn.execute(database.USER_SELECT + " WHERE u.Id_Usuario=? AND r.Nombre_Rol='cliente' AND u.Estado='activo'", (customer,)).fetchone():
+                    raise ApiError(400, 'Selecciona un cliente activo')
             subtotal, lines = 0, []
             for pid, qty in quantities.items():
                 product = conn.execute(database.PRODUCT_SELECT + " WHERE p.Id_Producto=? AND p.Estado_Publicacion='activo'", (pid,)).fetchone()
@@ -605,27 +626,42 @@ class Handler(SimpleHTTPRequestHandler):
                     raise ApiError(409, 'Stock insuficiente para ' + product['nombre'])
                 subtotal += product['precio'] * qty
                 lines.append((product, qty))
-            rates = self.settings(conn)
-            if shipping == 'free' and subtotal < rates['freeFrom']:
-                raise ApiError(400, 'El pedido no alcanza el minimo para envio gratis')
-            shipping_cost = 0 if subtotal >= rates['freeFrom'] else rates[shipping]
-            total = round(subtotal + shipping_cost, 2)
-            cid = database.client(conn, user['id_usuario'])
-            cart = database.active_cart(conn, user['id_usuario'])
-            conn.execute('DELETE FROM Detalle_Carrito WHERE Id_Carrito=?', (cart,))
-            for product, qty in lines:
-                conn.execute('INSERT INTO Detalle_Carrito (Id_Carrito,Id_Producto,Cantidad,Precio_Unitario) VALUES (?,?,?,?)', (cart, product['id_producto'], qty, product['precio']))
-            aid = conn.execute('INSERT INTO Direccion (Id_Cliente,Direccion,Ciudad) VALUES (?,?,?)', (cid, address.strip(), city.strip())).lastrowid
-            oid = conn.execute('INSERT INTO Pedido (Id_Cliente,Id_Carrito,Id_Direccion,Total,Telefono_Contacto) VALUES (?,?,?,?,?)', (cid, cart, aid, total, phone)).lastrowid
-            conn.execute('INSERT INTO Envio (Id_Pedido,Metodo,Tarifa,Estado) VALUES (?,?,?,?)', (oid, shipping, shipping_cost, 'pendiente'))
+            if cashier:
+                tax = float((Decimal(str(round(subtotal, 2))) * Decimal(str(rate)) / 100).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+                total = round(subtotal + tax, 2)
+                if data.get('expectedTotal') != total:
+                    raise ApiError(409, 'El precio cambió. Revisa el ticket antes de cobrar.')
+                cid = database.client(conn, customer)
+                oid = conn.execute("INSERT INTO Pedido (Id_Cliente,Total,Estado) VALUES (?,?,'entregado')", (cid, total)).lastrowid
+                sale = database.record_sale(conn, oid, user['id_usuario'], total)
+                conn.execute('UPDATE Venta SET Impuesto=? WHERE Id_Venta=?', (tax, sale))
+                conn.execute("INSERT INTO Envio (Id_Pedido,Metodo,Tarifa,Estado) VALUES (?,'mostrador',0,'entregado')", (oid,))
+                conn.execute('INSERT INTO Cobro_POS (Clave,Id_Usuario,Huella,Id_Pedido) VALUES (?,?,?,?)', (key,user['id_usuario'],fingerprint,oid))
+                self.audit(conn, 'Venta en mostrador', 'Venta', sale)
+            else:
+                rates = self.settings(conn)
+                if shipping == 'free' and subtotal < rates['freeFrom']:
+                    raise ApiError(400, 'El pedido no alcanza el minimo para envio gratis')
+                shipping_cost = 0 if subtotal >= rates['freeFrom'] else rates[shipping]
+                total = round(subtotal + shipping_cost, 2)
+                cid = database.client(conn, user['id_usuario'])
+                cart = database.active_cart(conn, user['id_usuario'])
+                conn.execute('DELETE FROM Detalle_Carrito WHERE Id_Carrito=?', (cart,))
+                for product, qty in lines:
+                    conn.execute('INSERT INTO Detalle_Carrito (Id_Carrito,Id_Producto,Cantidad,Precio_Unitario) VALUES (?,?,?,?)', (cart, product['id_producto'], qty, product['precio']))
+                aid = conn.execute('INSERT INTO Direccion (Id_Cliente,Direccion,Ciudad) VALUES (?,?,?)', (cid, address.strip(), city.strip())).lastrowid
+                oid = conn.execute('INSERT INTO Pedido (Id_Cliente,Id_Carrito,Id_Direccion,Total,Telefono_Contacto) VALUES (?,?,?,?,?)', (cid, cart, aid, total, phone)).lastrowid
+                conn.execute('INSERT INTO Envio (Id_Pedido,Metodo,Tarifa,Estado) VALUES (?,?,?,?)', (oid, shipping, shipping_cost, 'pendiente'))
             for product, qty in lines:
                 pid = product['id_producto']
                 conn.execute('INSERT INTO Detalle_Pedido (Id_Pedido,Id_Producto,Cantidad,Precio_Unitario,Nombre_Producto) VALUES (?,?,?,?,?)', (oid, pid, qty, product['precio'], product['nombre']))
                 conn.execute('UPDATE Inventario SET Stock_Total=Stock_Total-?,Stock_Reservable=MIN(Stock_Reservable,Stock_Total-?),Fecha_Actualizacion=CURRENT_TIMESTAMP WHERE Id_Producto=?', (qty, qty, pid))
-                conn.execute("INSERT INTO Movimiento_Inventario (Id_Producto,Id_Usuario,Id_Pedido,Tipo_Movimiento,Cantidad,Motivo) VALUES (?,?,?,'salida',?,'Pedido web')", (pid, user['id_usuario'], oid, qty))
-            conn.execute("UPDATE Carrito SET Estado='convertido' WHERE Id_Carrito=?", (cart,))
-            conn.execute("INSERT INTO Historial_Pedido (Id_Pedido,Id_Usuario,Estado_Nuevo,Motivo) VALUES (?,?,'pendiente','Pedido creado en la web')", (oid, user['id_usuario']))
-        self.send_json({'order': {'id': oid, 'total': total, 'status': 'pendiente'}}, 201)
+                conn.execute("INSERT INTO Movimiento_Inventario (Id_Producto,Id_Usuario,Id_Pedido,Tipo_Movimiento,Cantidad,Motivo) VALUES (?,?,?,'salida',?,?)", (pid, user['id_usuario'], oid, qty, 'Mostrador' if cashier else 'Pedido web'))
+            status = 'entregado' if cashier else 'pendiente'
+            if not cashier:
+                conn.execute("UPDATE Carrito SET Estado='convertido' WHERE Id_Carrito=?", (cart,))
+            conn.execute("INSERT INTO Historial_Pedido (Id_Pedido,Id_Usuario,Estado_Nuevo,Motivo) VALUES (?,?,?,?)", (oid, user['id_usuario'], status, 'Venta en mostrador' if cashier else 'Pedido creado en la web'))
+        self.send_json({'order': {'id': oid, 'total': total, 'status': status}}, 201)
 
     def list_orders(self, conn):
         user = self.current_user(conn)
@@ -650,6 +686,8 @@ class Handler(SimpleHTTPRequestHandler):
         one = lambda sql: conn.execute(sql).fetchone()[0]
         recent = conn.execute(database.ORDER_SELECT + ' ORDER BY p.Id_Pedido DESC LIMIT 6').fetchall()
         self.send_json({'stats': {
+            'todaySales': one("SELECT COALESCE(SUM(Total),0) FROM Venta WHERE Estado='confirmada' AND date(Fecha_Venta,'-5 hours')=date('now','-5 hours')"),
+            'activeOrders': one("SELECT COUNT(*) FROM Pedido WHERE Estado IN ('pendiente','pagado','enviado')"),
             'sales': one("SELECT COALESCE(SUM(Total),0) FROM Venta WHERE Estado='confirmada'"),
             'orders': one('SELECT COUNT(*) FROM Pedido'),
             'pendingOrders': one("SELECT COUNT(*) FROM Pedido WHERE Estado='pendiente'"),

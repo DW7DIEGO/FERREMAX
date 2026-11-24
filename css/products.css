@@ -334,3 +334,12 @@
     object-fit: cover; /* ¡CLAVE! Ajusta la imagen al contenedor recortando los bordes */
     transition: var(--transition);
 }
+@media (min-width: 1100px) {
+    .products-container { max-width: 1552px; padding: 30px clamp(24px,4vw,64px); gap: 24px; }
+    .filters-sidebar { width: 232px; }
+    .filter-group { border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+    .category-item { padding: 7px 10px; border-radius: 5px; }
+    .category-item.active { background: #e6f1ed; }
+    .products-header h1 { font-size: 28px; letter-spacing: -1.3px; }
+    .products-content { min-width: 0; }
+}

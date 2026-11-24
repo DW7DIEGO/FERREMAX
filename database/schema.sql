@@ -296,4 +296,12 @@ CREATE INDEX IF NOT EXISTS ix_pedido_cliente ON Pedido(Id_Cliente);
 CREATE INDEX IF NOT EXISTS ix_detalle_pedido ON Detalle_Pedido(Id_Pedido);
 CREATE INDEX IF NOT EXISTS ix_historial_pedido ON Historial_Pedido(Id_Pedido);
 CREATE INDEX IF NOT EXISTS ix_movimiento_producto ON Movimiento_Inventario(Id_Producto);
-PRAGMA user_version = 2;
+
+CREATE TABLE IF NOT EXISTS Cobro_POS (
+    Clave TEXT NOT NULL,
+    Id_Usuario INTEGER NOT NULL REFERENCES Usuario(Id_Usuario),
+    Huella TEXT NOT NULL,
+    Id_Pedido INTEGER NOT NULL UNIQUE REFERENCES Pedido(Id_Pedido),
+    PRIMARY KEY (Clave, Id_Usuario)
+);
+PRAGMA user_version = 3;

@@ -15,7 +15,7 @@ function loadHeader() {
     header.innerHTML = `
         <div class="header-container container">
             <a href="home.html" class="logo">
-                <img src="${imgUrl('img/LOGO.jpeg')}" alt="FerreMax Logo">
+                <img class="brand-logo" src="../img/LOGO.jpeg" alt="FerreMax">
 
             </a>
             

@@ -28,7 +28,7 @@ Las cuatro tablas de soporte son `Sesion`, `Configuracion`, `Favorito` y `Prefer
 
 Al iniciar, `server/database.py` detecta el esquema anterior. Primero crea una copia consistente en `server/backups/antes_migracion_er_*.db`; después migra a un archivo temporal, verifica integridad, claves foráneas y conteos, y sustituye la base activa. Si falla una comprobación, conserva la base anterior.
 
-Se conservan identificadores de usuarios, productos y pedidos, contraseñas cifradas mediante hash, sesiones, precios, imágenes, existencias, configuraciones y preferencias. El arranque posterior no repite la migración ni crea otro administrador. La versión del esquema es `PRAGMA user_version = 2`.
+Se conservan identificadores de usuarios, productos y pedidos, contraseñas cifradas mediante hash, sesiones, precios, imágenes, existencias, configuraciones y preferencias. El arranque posterior no repite la migración ni crea otro administrador. La versión del esquema es `PRAGMA user_version = 3`.
 
 Los registros anteriores sin ciudad mantienen la ciudad vacía: no se inventan datos de entrega. Los pedidos nuevos requieren ciudad. No se reconstruyen movimientos históricos de inventario que el sistema anterior no registraba.
 

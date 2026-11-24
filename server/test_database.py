@@ -53,8 +53,8 @@ class DatabaseTests(unittest.TestCase):
         conn.executescript(schema)
         actual = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")}
         self.assertTrue(expected.issubset(actual))
-        self.assertEqual(len(actual), 30)
-        self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 2)
+        self.assertEqual(len(actual), 31)
+        self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 3)
         conn.close()
         er.close()
 

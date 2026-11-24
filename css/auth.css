@@ -154,3 +154,13 @@
         flex-direction: column;
     }
 }
+.auth-container { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: stretch; max-width: 1070px; margin: 40px auto; padding: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: white; }
+.login-photo { min-height: 510px; color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 38px; background: linear-gradient(0deg,#102e27f2 2%,#102e2720 78%,#102e2788),url('../img/almacen.jpg') center / cover; }
+.login-photo > div { display: flex; align-items: center; gap: 9px; }
+.login-photo h1 { font-size: 50px; line-height: 1; max-width: 330px; letter-spacing: -2.8px; }
+.auth-card { max-width: none; width: 100%; box-shadow: none; border: 0; border-radius: 0; padding: 30px 32px; align-self: center; }
+.auth-tabs { background: var(--canvas); padding: 4px; border: 0; border-radius: 8px; }
+.auth-tab { padding: 9px; border-radius: 6px; }
+.auth-tab.active { background: white; border: 0; box-shadow: var(--box-shadow); }
+.auth-form-container { padding: 23px 4px 0; }
+.auth-form h2 { text-align: left; font-size: 27px; letter-spacing: -1px; }
